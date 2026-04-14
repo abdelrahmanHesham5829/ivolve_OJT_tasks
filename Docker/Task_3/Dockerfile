@@ -1,9 +1,5 @@
-FROM maven:3.9.6-eclipse-temurin-17
-WORKDIR /app
-COPY . .
-RUN mvn clean package
+FROM scratch
 
-EXPOSE 8080
+ADD target/demo-0.0.1-SNAPSHOT.jar app.jar
 
-CMD ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
-
+ENTRYPOINT ["java","-jar","app.jar"]
