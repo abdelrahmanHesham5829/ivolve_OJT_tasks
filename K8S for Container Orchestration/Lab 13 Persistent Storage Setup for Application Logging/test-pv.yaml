@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-test-pod
+  namespace: ivolve
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - mountPath: /var/log/nginx
+      name: log-storage
+  volumes:
+  - name: log-storage
+    persistentVolumeClaim:
+      claimName: app-logs-pvc
