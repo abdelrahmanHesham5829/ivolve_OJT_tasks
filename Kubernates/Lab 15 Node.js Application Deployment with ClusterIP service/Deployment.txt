@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs
+  template:
+    metadata:
+      labels:
+        app: nodejs
+    spec:
+      tolerations:
+        - key: "node"
+          operator: "Equal"
+          value: "worker"
+          effect: "NoSchedule"
+
+      containers:
+        - name: nodejs-container
+          image: your-dockerhub-username/nodejs-app:latest
+
+          envFrom:
+            - configMapRef:
+                name: nodejs-config
+            - secretRef:
+                name: nodejs-secret
+
+          volumeMounts:
+            - name: nodejs-storage
+              mountPath: /app/data
+
+      volumes:
+        - name: nodejs-storage
+          persistentVolumeClaim:
+            claimName: nodejs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-service
+spec:
+  type: ClusterIP
+  selector:
+    app: nodejs
+  ports:
+    - port: 80
+      targetPort: 3000
